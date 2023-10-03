@@ -1233,10 +1233,10 @@ def download_from_original_stable_diffusion_ckpt(
             checkpoint = safe_load(checkpoint_path_or_dict, device="cpu")
         else:
             if device is None:
-                device = "cuda" if torch.cuda.is_available() else "cpu"
+                device = "cpu" if torch.cuda.is_available() else "cpu"
                 checkpoint = torch.load(checkpoint_path_or_dict, map_location=device)
             else:
-                checkpoint = torch.load(checkpoint_path_or_dict, map_location=device)
+                checkpoint = torch.load(checkpoint_path_or_dict, map_location="cpu")
     elif isinstance(checkpoint_path_or_dict, dict):
         checkpoint = checkpoint_path_or_dict
 
@@ -1406,7 +1406,7 @@ def download_from_original_stable_diffusion_ckpt(
     if is_accelerate_available():
         if model_type not in ["SDXL", "SDXL-Refiner"]:  # SBM Delay this.
             for param_name, param in converted_unet_checkpoint.items():
-                set_module_tensor_to_device(unet, param_name, "cpu", value=param)
+                set_module_tensor_to_device(unet, param_name, "cuda", value=param)
     else:
         unet.load_state_dict(converted_unet_checkpoint)
 
@@ -1432,7 +1432,7 @@ def download_from_original_stable_diffusion_ckpt(
 
         if is_accelerate_available():
             for param_name, param in converted_vae_checkpoint.items():
-                set_module_tensor_to_device(vae, param_name, "cpu", value=param)
+                set_module_tensor_to_device(vae, param_name, "cuda", value=param)
         else:
             vae.load_state_dict(converted_vae_checkpoint)
     elif vae is None:
@@ -1609,7 +1609,7 @@ def download_from_original_stable_diffusion_ckpt(
             if is_accelerate_available():  # SBM Now move model to cpu.
                 if model_type in ["SDXL", "SDXL-Refiner"]:
                     for param_name, param in converted_unet_checkpoint.items():
-                        set_module_tensor_to_device(unet, param_name, "cpu", value=param)
+                        set_module_tensor_to_device(unet, param_name, "cuda", value=param)
 
             if controlnet:
                 pipe = pipeline_class(
@@ -1650,7 +1650,7 @@ def download_from_original_stable_diffusion_ckpt(
             if is_accelerate_available():  # SBM Now move model to cpu.
                 if model_type in ["SDXL", "SDXL-Refiner"]:
                     for param_name, param in converted_unet_checkpoint.items():
-                        set_module_tensor_to_device(unet, param_name, "cpu", value=param)
+                        set_module_tensor_to_device(unet, param_name, "cuda", value=param)
 
             pipe = StableDiffusionXLImg2ImgPipeline(
                 vae=vae,
