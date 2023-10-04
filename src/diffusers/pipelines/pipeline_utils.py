@@ -708,12 +708,7 @@ class DiffusionPipeline(ConfigMixin, PushToHubMixin):
         """
 
         torch_dtype = kwargs.pop("torch_dtype", None)
-        if torch_dtype is not None:
-            deprecate("torch_dtype", "0.25.0", "")
         torch_device = kwargs.pop("torch_device", None)
-        if torch_device is not None:
-            deprecate("torch_device", "0.25.0", "")
-
         dtype_kwarg = kwargs.pop("dtype", None)
         device_kwarg = kwargs.pop("device", None)
         silence_dtype_warnings = kwargs.pop("silence_dtype_warnings", False)
